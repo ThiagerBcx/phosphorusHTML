@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subir HTML y generar enlace</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+    label, input, button, textarea {
+      display: block;
+      margin: 10px 0;
+      width: 100%;
+    }
+    iframe {
+      border: 2px solid #333;
+      margin-top: 20px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Subir archivo HTML y generar enlace/embed</h1>
+
+  <!-- Subir archivo HTML -->
+  <label for="htmlFile">Selecciona tu archivo HTML:</label>
+  <input type="file" id="htmlFile" accept=".html">
+
+  <!-- Tamaño del iframe -->
+  <label for="width">Ancho:</label>
+  <input type="number" id="width" value="482">
+
+  <label for="height">Alto:</label>
+  <input type="number" id="height" value="393">
+
+  <button id="loadBtn">Cargar proyecto</button>
+
+  <!-- Vista previa del proyecto -->
+  <iframe id="gameFrame" width="482" height="393"></iframe>
+
+  <h2>Código HTML para incrustar en otra página (Google Sites, web, etc.)</h2>
+  <textarea id="embedCode" rows="5" readonly></textarea>
+
+  <script>
+    const loadBtn = document.getElementById('loadBtn');
+    const htmlFileInput = document.getElementById('htmlFile');
+    const gameFrame = document.getElementById('gameFrame');
+    const widthInput = document.getElementById('width');
+    const heightInput = document.getElementById('height');
+    const embedCode = document.getElementById('embedCode');
+
+    loadBtn.addEventListener('click', () => {
+      const file = htmlFileInput.files[0];
+      if (!file) {
+        alert("Selecciona un archivo HTML primero.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const content = e.target.result;
+
+        // Crear un Blob y URL para el iframe
+        const blob = new Blob([content], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+
+        // Ajustar tamaño del iframe
+        gameFrame.width = widthInput.value;
+        gameFrame.height = heightInput.value;
+
+        // Mostrar proyecto en iframe
+        gameFrame.src = url;
+
+        // Generar código para incrustar en otra web
+        embedCode.value = `<iframe src="${url}" width="${widthInput.value}" height="${heightInput.value}" style="border:2px solid #333;"></iframe>`;
+      };
+
+      reader.readAsText(file);
+    });
+  </script>
+
+</body>
+</html>
